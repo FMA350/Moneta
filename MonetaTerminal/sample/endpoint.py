@@ -25,13 +25,13 @@ class ServerWrapper:
         self.server.listen(10)
         self.server_port = port
 
+
     def run_server(self):
         self._start_server(ServerWrapper.port)
         while True:
             connection, address = self.server.accept()
             print("Connection from", address)
             self.connections.append(connection)
-            connection.send("Hello, world!".encode())
-            # TODO: Create a subscription
+            connection.send("Connected to the price simulator".encode())
             connection.close()
     
