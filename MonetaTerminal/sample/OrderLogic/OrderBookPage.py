@@ -1,11 +1,13 @@
 import heapq
-
-import Order
-import MonetaTerminal.sample.side_enum as side_enum
-import MonetaTerminal.sample.order_status_enum as order_enum
+import threading
+import MonetaTerminal.sample.OrderLogic.Order as Order
+import MonetaTerminal.sample.OrderLogic.side_enum as side_enum
+import MonetaTerminal.sample.OrderLogic.order_status_enum as order_enum
 
 class OrderBookPage:
     def __init__(self, security) -> None:
+
+        self.page_lock = threading.Lock()
 
         self.security = security
         self.buy_book = []  #heap  
@@ -14,16 +16,18 @@ class OrderBookPage:
         heapq.heapify(self.sell_book)
 
     def __AddOrder(self, order: Order.Order) -> bool:
+        self.page_lock.acquire()
         #blindly add the order
         if order.side == side_enum.Side.Buy:
             heapq.heappush(self.buy_book, order)
         else:
             heapq.heappush(self.sell_book, order)
-
+        self.page_lock.release()
         return True
     
     def __Match(self, order_buy : Order.Order, order_sell : Order.Order):
-        # Get how many shares are we transacting
+        self.page_lock.acquire()
+        # How many shares are we transacting?
         minVolume = min(order_buy.RemainingVolume(), order_sell.RemainingVolume())
         # Check which order was first and use that price
         price = order_buy.price
@@ -39,8 +43,11 @@ class OrderBookPage:
             heapq.heappop(self.buy_book)
         if(order_sell.GetStatus() == order_enum.order_status.filled):
             heapq.heappop(self.sell_book)
+
+        self.page_lock.release()
     
     def __Balance(self) -> None:
+        self.page_lock.acquire()
         while True:
             best_buy = heapq.heappeek(self.buy_book)
             best_sell = heapq.heappeek(self.sell_book)
@@ -48,13 +55,23 @@ class OrderBookPage:
                 self.__Match(best_buy, best_sell)
             else:
                 break
+        self.page_lock.release()
+
+    def RemoveOrder(self, order: Order.Order) -> bool:
+        #TODO
+        pass
+
+    def ModifyOrder(self, order: Order.Order) -> bool:
+
+        #TODO
+        pass
 
     def AppendOrder(self, order: Order.Order) -> None:
         self.__AddOrder(order)
-        #check for imbalances
         self.__Balance()    
 
-    #returns best buy (low), sell (high) prices and mid
+    # Returns best buy (low), sell (high) prices and mid
+    # Aux method
     def GetPrices(self) -> []:
         best_buy = heapq.heappeek(self.buy_book)
         best_sell = heapq.heappeek(self.sell_book)

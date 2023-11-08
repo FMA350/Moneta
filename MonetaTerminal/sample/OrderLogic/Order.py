@@ -1,6 +1,6 @@
-import IDGenerator
-import MonetaTerminal.sample.side_enum as side_enum
-import MonetaTerminal.sample.order_status_enum as order_enum
+import Helpers.IDGenerator
+import OrderLogic.side_enum as side_enum
+import OrderLogic.order_status_enum as order_enum
 import datetime
 #Container structure for orders
 class Order:
@@ -15,13 +15,12 @@ class Order:
         self.ticker = ticker
         self.volume = volume
         self.filled_volume = 0
-
         self.price = price
         self.side = side
         self.dateIn = dateIn
         self.senderID = senderID
         self.__status = order_enum.order_status.new
-        #self.__associated_orders = []
+        self.__associated_orders = []
         
 
     def RemainingVolume(self) -> int:
