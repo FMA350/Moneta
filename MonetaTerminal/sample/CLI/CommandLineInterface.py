@@ -1,5 +1,7 @@
 import readline
 from OrderLogic.Order import Order
+from OrderLogic.side_enum import Side, get_side_from_str
+from datetime import datetime
 
 class CLI:
     def __init__(self) -> None:
@@ -19,11 +21,13 @@ class CLI:
             ticker = tokens[0]
             side   = tokens[1]
             qty    = tokens[2]
-            price  = tokens[3]
-            #TODO
-            #order = Order(ticker, qty, price)
-        except:
+            price  = tokens[3] #Currently a float, eventually a class of its own for precision
+            order = Order(ticker, qty, price, get_side_from_str(side), datetime.now(), "CLI")
+            print(" new order created with ID: " + str(order.id))
+            return order.id
+        except Exception as e:
             print("Failed to tokenize the input string")
+            print(e)
 
     def __parse(self,user_input: str):
         if(user_input == "help"):

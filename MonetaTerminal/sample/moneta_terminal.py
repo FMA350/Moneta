@@ -3,7 +3,6 @@ import time
 from CLI.CommandLineInterface import CLI
 from endpoint import ServerWrapper
 
-
 def main_loop():
     while True:
         print("Updating prices...")

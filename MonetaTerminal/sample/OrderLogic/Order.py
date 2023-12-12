@@ -1,4 +1,4 @@
-import Helpers.IDGenerator
+import Helpers.IDGenerator as IDGenerator
 import OrderLogic.side_enum as side_enum
 import OrderLogic.order_status_enum as order_enum
 import datetime
@@ -21,7 +21,6 @@ class Order:
         self.senderID = senderID
         self.__status = order_enum.order_status.new
         self.__associated_orders = []
-        
 
     def RemainingVolume(self) -> int:
         return self.volume - self.filled_volume
@@ -30,7 +29,7 @@ class Order:
         return self.__status
     
     def Fill(self, volume: int, price: float, otherOID):
-        
+        #TODO: finish and correct
         self.filled_volume += volume
         if self.filled_volume == volume:
             self.__status = order_enum.order_status.filled
