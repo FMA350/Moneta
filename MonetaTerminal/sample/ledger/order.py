@@ -1,6 +1,6 @@
-import Helpers.IDGenerator as IDGenerator
-import OrderLogic.side_enum as side_enum
-import OrderLogic.order_status_enum as order_enum
+from helper_methods import id_generator
+from ledger.side_enum import Side
+from ledger.order_status_enum import order_status
 import datetime
 #Container structure for orders
 class Order:
@@ -10,8 +10,8 @@ class Order:
     def __lt__(self, other) -> bool:
         return self.price < other.price
 
-    def __init__(self, ticker : str, volume : int, price : float, side: side_enum.Side, dateIn : datetime, senderID : str) -> None:
-        self.id = IDGenerator.IDGenerator.GetNewOrderId()
+    def __init__(self, ticker : str, volume : int, price : float, side: Side, dateIn : datetime, senderID : str) -> None:
+        self.id = id_generator.IDGenerator.GetNewOrderId()
         self.ticker = ticker
         self.volume = volume
         self.filled_volume = 0
@@ -19,22 +19,22 @@ class Order:
         self.side = side
         self.dateIn = dateIn
         self.senderID = senderID
-        self.__status = order_enum.order_status.new
+        self.__status = order_status.new
         self.__associated_orders = []
 
     def RemainingVolume(self) -> int:
         return self.volume - self.filled_volume
 
-    def GetStatus(self) -> order_enum.order_status:
+    def GetStatus(self) -> order_status:
         return self.__status
     
     def Fill(self, volume: int, price: float, otherOID):
         #TODO: finish and correct
         self.filled_volume += volume
         if self.filled_volume == volume:
-            self.__status = order_enum.order_status.filled
+            self.__status = order_status.filled
         else:
-            self.__status = order_enum.order_status.partial_fill
+            self.__status = order_status.partial_fill
         #Notify watchers
         
 

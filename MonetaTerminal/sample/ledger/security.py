@@ -1,5 +1,5 @@
 import random
-import IDGenerator
+from helper_methods.id_generator import IDGenerator
 
 #likely to remove
 class Security:

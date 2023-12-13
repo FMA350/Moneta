@@ -1,7 +1,5 @@
 import socket
 
-
-
 class ServerWrapper:
     port = 1337
 

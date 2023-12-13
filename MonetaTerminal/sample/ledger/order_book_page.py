@@ -1,8 +1,7 @@
 import heapq
 import threading
-import MonetaTerminal.sample.OrderLogic.Order as Order
-import MonetaTerminal.sample.OrderLogic.side_enum as side_enum
-import MonetaTerminal.sample.OrderLogic.order_status_enum as order_enum
+from side_enum import Side
+from order import Order, order_status_enum
 
 class OrderBookPage:
     def __init__(self, security) -> None:
@@ -15,10 +14,10 @@ class OrderBookPage:
         self.sell_book = [] #heap
         heapq.heapify(self.sell_book)
 
-    def __AddOrder(self, order: Order.Order) -> bool:
+    def __AddOrder(self, order: Order) -> bool:
         self.page_lock.acquire()
         #blindly add the order
-        if order.side == side_enum.Side.Buy:
+        if order.side == Side.Buy:
             heapq.heappush(self.buy_book, order)
         else:
             heapq.heappush(self.sell_book, order)
@@ -39,9 +38,9 @@ class OrderBookPage:
         order_sell.Fill(minVolume, price, order_buy.id)
 
         # Remove filled orders
-        if(order_buy.GetStatus() == order_enum.order_status.filled):
+        if(order_buy.GetStatus() == order_status_enum.order_status.filled):
             heapq.heappop(self.buy_book)
-        if(order_sell.GetStatus() == order_enum.order_status.filled):
+        if(order_sell.GetStatus() == order_status_enum.order_status.filled):
             heapq.heappop(self.sell_book)
 
         self.page_lock.release()
