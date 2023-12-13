@@ -16,7 +16,7 @@ class CLI:
         print("quit \t exists from the program")
         print("help \t prints this help page")
 
-    def __parse_add_order(self):
+    def __parse_add_order(self) -> Order:
         print("Additional info required: [ticker] [side] [qty] [price] -> OrderID")
         user_input = input("add_order$ ")
         tokens = user_input.split()
@@ -27,7 +27,7 @@ class CLI:
             price  = tokens[3] #Currently a float, eventually a class of its own for precision
             order = Order(ticker, qty, price, get_side_from_str(side), datetime.now(), "CLI")
             print(" new order created with ID: " + str(order.id))
-            return order.id
+            return order
         except Exception as e:
             print("Failed to tokenize the input string")
             print(e)
@@ -38,7 +38,10 @@ class CLI:
         elif(user_input == "quit"):
             self.running = False
         elif(user_input == "add"):
-            self.__parse_add_order()
+            order = self.__parse_add_order()
+            # Pass the order to the appropriate OrderBookPage
+            orderBook = OrderBook()
+            orderBook.add_order(order)
         else:
             print(user_input + " is an unknown command")
             self.__print_help();

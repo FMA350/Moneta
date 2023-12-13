@@ -1,4 +1,4 @@
-from helper_methods import id_generator
+from helper_methods.id_generator import IDGenerator
 from ledger.side_enum import Side
 from ledger.order_status_enum import order_status
 import datetime
@@ -11,7 +11,7 @@ class Order:
         return self.price < other.price
 
     def __init__(self, ticker : str, volume : int, price : float, side: Side, dateIn : datetime, senderID : str) -> None:
-        self.id = id_generator.IDGenerator.GetNewOrderId()
+        self.id = IDGenerator.GetNewOrderId()
         self.ticker = ticker
         self.volume = volume
         self.filled_volume = 0
