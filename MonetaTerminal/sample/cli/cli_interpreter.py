@@ -17,12 +17,12 @@ class CLI:
         print("help \t prints this help page")
 
     def __parse_add_order(self) -> Order:
-        print("Additional info required: [ticker] [side] [qty] [price] -> OrderID")
+        print("Additional info required: [side] [ticker] [qty] [price] -> OrderID")
         user_input = input("add_order$ ")
         tokens = user_input.split()
         try:
-            ticker = tokens[0]
-            side   = tokens[1]
+            side = tokens[0]
+            ticker   = tokens[1]
             qty    = tokens[2]
             price  = tokens[3] #Currently a float, eventually a class of its own for precision
             order = Order(ticker, qty, price, get_side_from_str(side), datetime.now(), "CLI")
@@ -31,7 +31,7 @@ class CLI:
         except Exception as e:
             print("Failed to tokenize the input string")
             print(e)
-
+            
     def __parse(self,user_input: str):
         if(user_input == "help"):
             self.__print_help()

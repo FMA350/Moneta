@@ -10,11 +10,11 @@ class Order:
     def __lt__(self, other) -> bool:
         return self.price < other.price
 
-    def __init__(self, ticker : str, volume : int, price : float, side: Side, dateIn : datetime, senderID : str) -> None:
+    def __init__(self, ticker : str, size : int, price : float, side: Side, dateIn : datetime, senderID : str) -> None:
         self.id = IDGenerator.GetNewOrderId()
         self.ticker = ticker
-        self.volume = volume
-        self.filled_volume = 0
+        self.size = size
+        self.filled_size = 0
         self.price = price
         self.side = side
         self.dateIn = dateIn
@@ -22,16 +22,16 @@ class Order:
         self.__status = order_status.new
         self.__associated_orders = []
 
-    def RemainingVolume(self) -> int:
-        return self.volume - self.filled_volume
+    def RemainingSize(self) -> int:
+        return self.size - self.filled_size
 
     def GetStatus(self) -> order_status:
         return self.__status
     
-    def Fill(self, volume: int, price: float, otherOID):
+    def Fill(self, size: int, price: float, otherOID):
         #TODO: finish and correct
-        self.filled_volume += volume
-        if self.filled_volume == volume:
+        self.filled_size += size
+        if self.filled_size == size:
             self.__status = order_status.filled
         else:
             self.__status = order_status.partial_fill

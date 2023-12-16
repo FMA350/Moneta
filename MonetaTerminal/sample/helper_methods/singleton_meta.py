@@ -4,6 +4,7 @@ class SingletonMeta(type):
     """
     This is a thread-safe implementation of Singleton.
     https://refactoring.guru/design-patterns/singleton/python/example#example-1
+    Fun fact: same answer was spitted out by chat-gpt 3.5
     """
     _instances = {}
 
