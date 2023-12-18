@@ -13,6 +13,7 @@ class CLI:
 
     def __print_help(self) -> None:
         print("add \t Adds an order with the specified characteristics ")
+        print("qadd \t Adds two orders for AAPL for quick testing")
         print("quit \t exists from the program")
         print("help \t prints this help page")
 
@@ -32,6 +33,7 @@ class CLI:
             print("Failed to tokenize the input string")
             print(e)
             
+    # TODO: move to a map[string][function] and allow for extensions
     def __parse(self,user_input: str):
         if(user_input == "help"):
             self.__print_help()
@@ -42,6 +44,13 @@ class CLI:
             # Pass the order to the appropriate OrderBookPage
             orderBook = OrderBook()
             orderBook.add_order(order)
+        elif(user_input == "qadd"):
+            order_buy1 = Order("AAPL", 50, 126.25, Side.Buy, datetime.now(), "CLI_B")
+            order_buy2 = Order("AAPL", 20, 126.50, Side.Buy, datetime.now(), "CLI_B")
+            OrderBook().add_order(order_buy1)
+            OrderBook().add_order(order_buy2)
+            order_sell = Order("AAPL", 200, 125.75, Side.Sell, datetime.now(), "CLI_S")
+            OrderBook().add_order(order_sell)
         else:
             print(user_input + " is an unknown command")
             self.__print_help();

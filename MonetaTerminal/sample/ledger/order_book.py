@@ -22,12 +22,12 @@ class OrderBook (metaclass=SingletonMeta):
             return False
         
     def __create_page(self, ticker) -> None:
-        self.create_page_lock.acquire()
-        if self.__has_book_for_security(ticker):
-            print("Warning: attempting to create an order book page for a security that already exists; returning...")
-            return # Another process has created the security already 
-        page = OrderBookPage(ticker)
-        self.pages[ticker] = page
+        with self.create_page_lock:
+            if self.__has_book_for_security(ticker):
+                print("Warning: attempting to create an order book page for a security that already exists; returning...")
+                return # Another process has created the security already 
+            page = OrderBookPage(ticker)
+            self.pages[ticker] = page
 
     
     def add_order(self, new_order: Order) -> bool:

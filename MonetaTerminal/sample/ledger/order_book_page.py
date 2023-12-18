@@ -9,7 +9,7 @@ from ledger.order_status_enum import order_status
 class OrderBookPage:
     def __init__(self, ticker: str) -> None:
 
-        self.page_lock = threading.Lock()
+        self.page_lock = threading.RLock()
 
         self.ticker = ticker
         self.buy_book = []  #heap  
@@ -18,52 +18,50 @@ class OrderBookPage:
         heapq.heapify(self.sell_book)
 
     def __AddOrder(self, order: Order) -> bool:
-        self.page_lock.acquire()
-        #blindly add the order
-        if order.side == Side.Buy:
-            heapq.heappush(self.buy_book, order)
-        else:
-            heapq.heappush(self.sell_book, order)
-        self.page_lock.release()
+        with self.page_lock:
+            #blindly add the order
+            if order.side == Side.Buy:
+                heapq.heappush(self.buy_book, order)
+            else:
+                heapq.heappush(self.sell_book, order)
         return True
     
     def __Match(self, order_buy : Order, order_sell : Order):
         print("Matching " + str(order_buy.id) + " with " + str(order_sell.id))
-        self.page_lock.acquire()
-        # How many shares are we transacting?
-        minVolume = min(order_buy.RemainingVolume(), order_sell.RemainingVolume())
-        # Check which order was first and use that price
-        price = order_buy.price
-        if order_sell.dateIn < order_buy.dateIn:
-            price = order_sell.price
+        with self.page_lock:
+            # How many shares are we transacting?
+            minVolume = min(order_buy.RemainingSize(), order_sell.RemainingSize())
+            # Check which order was first and use that price
+            print("Trade volume: " + str(minVolume))
+            price = order_buy.price
+            if order_sell.dateIn < order_buy.dateIn:
+                price = order_sell.price
+            print("Priced at: " + str(price))
+            # Fill
+            order_buy.Fill(minVolume, price, order_sell.id)
+            order_sell.Fill(minVolume, price, order_buy.id)
 
-        # Fill
-        order_buy.Fill(minVolume, price, order_sell.id)
-        order_sell.Fill(minVolume, price, order_buy.id)
-
-        # Remove filled orders
-        if(order_buy.GetStatus() == order_status.filled):
-            heapq.heappop(self.buy_book)
-        if(order_sell.GetStatus() == order_status.filled):
-            heapq.heappop(self.sell_book)
-
-        self.page_lock.release()
+            # Remove filled orders
+            if(order_buy.GetStatus() == order_status.filled):
+                heapq.heappop(self.buy_book)
+            if(order_sell.GetStatus() == order_status.filled):
+                heapq.heappop(self.sell_book)
     
     def __Balance(self) -> None:
-        self.page_lock.acquire()
-        while True:
+        with self.page_lock:
+            while True:
 
-            if len(self.buy_book) == 0 or len(self.sell_book) == 0:
-                break
+                if len(self.buy_book) == 0 or len(self.sell_book) == 0:
+                    print("buy_book len: " + str(len(self.buy_book)) + "; sell_book len: " + str(len(self.sell_book)) + ".")
+                    break
 
-            best_buy = self.buy_book[0]
-            best_sell = self.sell_book[0]
+                best_buy = self.buy_book[0]
+                best_sell = self.sell_book[0]
 
-            if(best_buy.price >= best_sell.price):
-                self.__Match(best_buy, best_sell)
-            else:
-                break
-        self.page_lock.release()
+                if(best_buy.price >= best_sell.price):
+                    self.__Match(best_buy, best_sell)
+                else:
+                    break   
 
     def RemoveOrder(self, order: Order) -> bool:
         #TODO
@@ -92,10 +90,7 @@ class OrderBookPage:
 
     def __print_list(self, orders: []) -> None:
         for order in orders:
-            print("### ID: "+ str(order.id))
-            print("### Price: "+ str(order.price))
-            print("### Size: "+ str(order.size))
-            print ("")
+            order.Print()
 
     def PrintAll(self) -> None:
         print("# Product ticker: " + self.ticker)

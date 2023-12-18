@@ -22,6 +22,14 @@ class Order:
         self.__status = order_status.new
         self.__associated_orders = []
 
+    def Print(self) -> None:
+        print("ID       : " + str(self.id))
+        print("ticker   : " + str(self.ticker))
+        print("Size     : " + str(self.size))
+        print("Filled   : " + str(self.filled_size))
+        print("Price    : " + str(self.price))
+        print("Date in  : " + str(self.dateIn))
+
     def RemainingSize(self) -> int:
         return self.size - self.filled_size
 
@@ -31,7 +39,7 @@ class Order:
     def Fill(self, size: int, price: float, otherOID):
         #TODO: finish and correct
         self.filled_size += size
-        if self.filled_size == size:
+        if self.filled_size == self.size:
             self.__status = order_status.filled
         else:
             self.__status = order_status.partial_fill
