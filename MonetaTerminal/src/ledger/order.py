@@ -22,7 +22,7 @@ class Order:
         self.__status = order_status.new
         self.__associated_orders = []
 
-    def Print(self) -> None:
+    def print(self) -> None:
         print("ID       : " + str(self.id))
         print("ticker   : " + str(self.ticker))
         print("Size     : " + str(self.size))

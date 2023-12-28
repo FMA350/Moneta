@@ -50,7 +50,6 @@ class OrderBookPage:
     def __Balance(self) -> None:
         with self.page_lock:
             while True:
-
                 if len(self.buy_book) == 0 or len(self.sell_book) == 0:
                     print("buy_book len: " + str(len(self.buy_book)) + "; sell_book len: " + str(len(self.sell_book)) + ".")
                     break
@@ -61,6 +60,7 @@ class OrderBookPage:
                 if(best_buy.price >= best_sell.price):
                     self.__Match(best_buy, best_sell)
                 else:
+                    print("Pricing do not match")
                     break   
 
     def RemoveOrder(self, order: Order) -> bool:
@@ -74,11 +74,9 @@ class OrderBookPage:
     def AppendOrder(self, order: Order) -> None:
         self.__AddOrder(order)
         self.__Balance()    
-        self.PrintAll()
-
+        self.print_all()
 
     # Aux methods 
-
 
     # Returns best buy (low), sell (high) prices and mid
     def GetPrices(self) -> []:
@@ -87,12 +85,11 @@ class OrderBookPage:
         average = (best_buy.price + best_sell.price ) / 2
         return tuple(best_buy.price, best_sell.price, average)
     
-
     def __print_list(self, orders: []) -> None:
         for order in orders:
-            order.Print()
+            order.print()
 
-    def PrintAll(self) -> None:
+    def print_all(self) -> None:
         print("# Product ticker: " + self.ticker)
         print("## Current sell orders:" )
         self.__print_list(self.sell_book)

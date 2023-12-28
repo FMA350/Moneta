@@ -1,6 +1,6 @@
 # Moneta Terminal
 
-*As weird hybrid between an exchange, a broker, and a Bloomberg terminal. Your all in one simulator.*
+*A weird hybrid between an exchange, a broker, and a Bloomberg terminal. Your all in one simulator.*
 
 MonetaTerminal was born out of necessities. Firstly, the necessity of having a system capable of interacting with
 the yet to be designed Moneta-HFT system. A trading system requires an eco-system around it to receive pricing data,

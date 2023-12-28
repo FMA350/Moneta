@@ -29,6 +29,10 @@ class OrderBook (metaclass=SingletonMeta):
             page = OrderBookPage(ticker)
             self.pages[ticker] = page
 
+    def print_all(self) -> None:
+        for page in self.pages.values():
+            page.print_all()
+
     
     def add_order(self, new_order: Order) -> bool:
         # Check if an order page already exists in the book
