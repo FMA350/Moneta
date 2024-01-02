@@ -10,7 +10,7 @@ class CLI:
     def __init__(self) -> None:
         self.running = True # Controls the status of the CLI
         self.context = ("main","$")  # Used to inform the user of contextual information (ex: submenu)
-        self.logger  = logger_factory.get_logger("cli_logger")
+        self.logger  = logger_factory().make_logger("cli_logger")
 
     def __print_help(self) -> None:
         print("add \t Adds an order with the specified characteristics ")
@@ -37,6 +37,7 @@ class CLI:
             
     # TODO: move to a map[string][function] and allow for extensions
     def __parse(self,user_input: str):
+        self.logger.debug(f"received user input '{user_input}'")
         if(user_input == "help"):
             self.__print_help()
         elif(user_input == "quit"):

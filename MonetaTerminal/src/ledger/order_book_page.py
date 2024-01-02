@@ -90,10 +90,12 @@ class OrderBookPage:
             order.print()
 
     def print_all(self) -> None:
+        print("")
         print("# Product ticker: " + self.ticker)
         print("## Current sell orders:" )
         self.__print_list(self.sell_book)
         print("## Current buy orders:" )
         self.__print_list(self.buy_book)
+        print("")
         
         
